@@ -12,9 +12,29 @@
 ?>
 
 	<footer id="colophon" class="site-footer">
-		<div class="footer-contact">
-			
-		</div><!-- .footer-contact -->
+		<div class="footer-contact">	
+            <?php
+                if ( function_exists ( 'get_field' ) ) {
+                    
+                    if ( get_field( 'street_address', 16 )) {
+                    // Where 16 is the unique ID of the Contact page
+                        echo '<i class="footer_contact_left">';
+                        the_field( 'street_address', 16 );
+                        echo '</i>';
+                    }
+                    
+                    if ( get_field( 'email_address', 16 )) {
+                    // Where 16 is the unique ID of the Contact page
+                        $email_address = wp_kses_post( get_field( 'email_address', 16 ));
+                        echo '<i class="footer_contact_right"><a href="mailto:'
+                            .$email_address
+                            .'">'
+                        . $email_address
+                        . '</a></i>';
+                    }
+                }
+            ?>
+		</div><!-- footer-contact -->
 		<div class="footer-menus">
 				<nav class="footer-navigation">
                     <?php wp_nav_menu( array( 'theme_location' => 'footer-left' )); ?>
@@ -24,6 +44,7 @@
                 </nav>
 		</div><!-- .footer-menus -->
 		<div class="site-info">
+            <?php the_privacy_policy_link(); ?></br>
 			<?php esc_html_e( 'Created by ', 'fwd' ); ?><a href="<?php echo esc_url( __( 'https://wp.bcitwebdeveloper.ca/', 'fwd' ) ); ?>"><?php esc_html_e( 'Jonathon Leathers', 'fwd' ); ?></a>
 		</div><!-- .site-info -->
 	</footer><!-- #colophon -->

@@ -46,6 +46,11 @@ function fwd_setup() {
 		*/
 	add_theme_support( 'post-thumbnails' );
 
+    // Our Custom Image Crap Sizes
+    // Portrait Blog Size - 200px width, 250px height, hard crop
+    add_image_size( 'portrait-blog', 200, 250, true );
+    add_image_size( 'landscape-blog', 400, 200, true );
+    
 	// This theme uses wp_nav_menu() in one location.
 	register_nav_menus(
 		array(
@@ -197,3 +202,45 @@ require get_template_directory() . '/inc/customizer.php';
 if ( defined( 'JETPACK__VERSION' ) ) {
 	require get_template_directory() . '/inc/jetpack.php';
 }
+
+/**
+ * Add the theme (fwd) color
+ */
+function fwd_theme_color() {
+    echo '<meta name="theme-color" content="#fff200">';
+}
+add_action( 'wp_head', 'fwd_theme_color', 1 );
+
+/**
+ * Change excerpt length to 20 words for theme (fwd)
+ */
+function fwd_excerpt_length( $length ) {
+    return 20;
+}
+add_filter( 'excerpt_length', 'fwd_excerpt_length', 999 );
+
+/**
+ * Change excerpt length to 20 words for theme (fwd)
+ */
+function fwd_excerpt_more( $more ) {
+    $more = '... <a class="read-more" href="'
+        . esc_url( get_permalink() )
+        . '">'
+        . __( 'Continue Reading', 'fwd' )
+        .'</a>';
+    return $more;
+}
+add_filter( 'excerpt_more', 'fwd_excerpt_more' );
+
+/**
+ * Use this to switch from Block editor to Classic editor
+ */
+function fwd_post_filter( $use_block_editor, $post ) {
+    $page_ids = array( 6, 67 ); // Home Page, Test (ACF) Page
+    if ( in_array( $post->ID, $page_ids ) ) {
+        return false;
+    } else {
+        return $use_block_editor;
+    }
+}
+add_filter( 'use_block_editor_for_post', 'fwd_post_filter', 10, 2 );
