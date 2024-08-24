@@ -26,6 +26,31 @@
 				'after'  => '</div>',
 			)
 		);
+        
+        if ( is_page( 'contact' )) :
+        ?>
+            <div class="entry-content">
+                <?php
+                if ( get_field( 'street_address' )) {
+                    $street = get_field( 'street_address' );
+                    echo '<i class="footer_contact_right">'
+                        . $street
+                        .'</i>';
+                }
+
+                if ( get_field( 'email_address' )) {
+                    $email = get_field( 'email_address' );
+                    $mailto = 'mailto:' . $email;
+                    echo '<i class="footer_contact_right"><a href="'
+                        . esc_url( $mailto )
+                        .'">'
+                    .esc_html( $email )
+                    . '</a></i>';
+                }
+                ?>
+            </div>
+        <?php
+        endif;
 		?>
 	</div><!-- .entry-content -->
 

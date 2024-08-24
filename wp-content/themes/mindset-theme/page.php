@@ -29,29 +29,6 @@ get_header();
 			endif;
 
 		endwhile; // End of the loop.
-
-        if ( is_page( 'contact' )) :
-        ?>
-            <div class="entry-content">
-                <?php
-                if ( function_exists ( 'get_field' ) ) {
-                    
-                    if ( get_field( 'street_address' ) ) {
-                        echo '<p>';
-                        the_field( 'street_address' );
-                        echo '</p>';
-                    }
-                    
-                    if ( get_field( 'email_address' ) ) {
-                        echo '<p>';
-                        the_field( 'email_address' );
-                        echo '</p>';
-                    }
-                }
-                ?>
-            </div>
-        <?php
-        endif;
         ?>
 	</main><!-- #primary -->
 

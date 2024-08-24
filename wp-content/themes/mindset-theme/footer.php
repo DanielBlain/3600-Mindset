@@ -14,22 +14,23 @@
 	<footer id="colophon" class="site-footer">
 		<div class="footer-contact">	
             <?php
-                if ( function_exists ( 'get_field' ) ) {
+                if ( !is_page( 'contact' ) && function_exists ( 'get_field' ) ) {
                     
                     if ( get_field( 'street_address', 16 )) {
-                    // Where 16 is the unique ID of the Contact page
-                        echo '<i class="footer_contact_left">';
-                        the_field( 'street_address', 16 );
-                        echo '</i>';
+                        $street = get_field( 'street_address', 16 );
+                        echo '<i class="footer_contact_right">'
+                            . $street
+                            .'</i>';
                     }
                     
                     if ( get_field( 'email_address', 16 )) {
                     // Where 16 is the unique ID of the Contact page
-                        $email_address = wp_kses_post( get_field( 'email_address', 16 ));
-                        echo '<i class="footer_contact_right"><a href="mailto:'
-                            .$email_address
+                        $email = get_field( 'email_address', 16 );
+                        $mailto = 'mailto:' . $email;
+                        echo '<i class="footer_contact_right"><a href="'
+                            .esc_url( $mailto )
                             .'">'
-                        . $email_address
+                        .esc_html( $email )
                         . '</a></i>';
                     }
                 }

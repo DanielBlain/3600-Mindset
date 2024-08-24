@@ -181,6 +181,9 @@ function fwd_scripts() {
 }
 add_action( 'wp_enqueue_scripts', 'fwd_scripts' );
 
+/** Custom post types and taxonomies. */
+require get_template_directory() . '/inc/cpt-taxonomy.php';
+
 /**
  * Custom template tags for this theme.
  */
@@ -218,6 +221,31 @@ function fwd_excerpt_length( $length ) {
     return 20;
 }
 add_filter( 'excerpt_length', 'fwd_excerpt_length', 999 );
+
+/**
+ * Use this to change the default placeholder text "Add Title" on new
+ * Service posts to "Add Service name"
+ */
+function fwd_enter_service_here( $title ) {
+    $screen = get_current_screen();
+
+    if ( is_admin() && $screen ) {
+        switch ( $screen->post_type ) {
+            case 'fwd-work':
+                return 'Add work title';
+            case 'fwd-service':
+                return 'Add service name';
+            case 'fwd-testimonial':
+                return 'Add client name';
+            case 'fwd-career':
+                return 'Add new career posting';
+            // No need for default, will return $title shortly
+        }
+    }
+
+    return $title;
+}
+add_filter( 'enter_title_here', 'fwd_enter_service_here' );
 
 /**
  * Change excerpt length to 20 words for theme (fwd)

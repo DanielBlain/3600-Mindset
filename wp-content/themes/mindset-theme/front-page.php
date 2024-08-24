@@ -29,7 +29,34 @@ get_header();
                 }
                 ?>
             </section>
-            <section class='home-work'></section>
+
+            <?php
+            // Works Section - - does not present if there are no works
+                $args = array(
+                    'post_type'      => 'fwd-work',
+                    'posts_per_page' => 4,
+                );
+                $query = new WP_Query( $args );
+                
+                if ( $query->have_posts() ) {
+                    echo '<section class="home-work"><h2>';
+                    esc_html_e( 'Featured Works', 'fwd' );
+                    echo '</h2>';
+                    while( $query->have_posts() ) {
+                        $query->the_post(); 
+                        ?>
+                        <article>
+                            <a href="<?php the_permalink(); ?>">
+                                <?php the_post_thumbnail('medium'); ?>
+                                <h3><?php the_title(); ?></h3>
+                            </a>
+                        </article>
+                        <?php
+                    }
+                    wp_reset_postdata();
+                    echo '</section>';
+                }
+            ?>
             <section class='home-work'></section>
             <section class='home-left'>
                 <?php
