@@ -170,6 +170,12 @@ add_action( 'widgets_init', 'fwd_widgets_init' );
  * Enqueue scripts and styles.
  */
 function fwd_scripts() {
+    wp_enqueue_style(
+        'fwd-googlefonts', // unique handle
+        'https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap', // Google Fonts url
+        array(),        // Dependencies array
+        null           // Version number for Google Fonts, always set to null
+    );
 	wp_enqueue_style( 'fwd-style', get_stylesheet_uri(), array(), _S_VERSION );
 	wp_style_add_data( 'fwd-style', 'rtl', 'replace' );
 
@@ -272,3 +278,16 @@ function fwd_post_filter( $use_block_editor, $post ) {
     }
 }
 add_filter( 'use_block_editor_for_post', 'fwd_post_filter', 10, 2 );
+
+
+/**
+ * Remove "Archive:" from Work archive page heading
+ */
+function fwd_remove_work_archive_title_prefix( $prefix ){
+    if ( get_post_type() === 'fwd-work' ) {
+        return '';
+    }
+    return $prefix;
+}
+add_filter( 'get_the_archive_title_prefix', 'fwd_remove_work_archive_title_prefix' );
+ 

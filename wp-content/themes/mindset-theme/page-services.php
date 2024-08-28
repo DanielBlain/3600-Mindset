@@ -16,65 +16,85 @@ get_header();
 ?>
 
     <main id="primary" class="site-main">
-        
-        <?php
-        if ( have_posts() ) {
-            if ( function_exists ( 'get_field' ) ) {
 
-                /** Display Service mini-nav */
-                $args = array(
-                    'post_type'      => 'fwd-service',
-                    'posts_per_page' => -1,
-                    'order'          => 'ASC',
-                );
-                $query = new WP_Query( $args );
-                
-                if ( $query->have_posts() ) {
-                    echo '<nav class="service-links">';
-                    while( $query->have_posts() ) {
-                        $query->the_post(); 
-                        echo '<a href="#';
-                            the_ID();
-                            echo '">';
-                            the_title();
-                        echo '</a>';
-                    }
-                    wp_reset_postdata();
-                    echo '</nav>';
-                }
-        
+        <?php while ( have_posts() ) : the_post(); ?>
 
-                /** Display each Service in ascending order */
-                // Using the same $args array
-                $query = new WP_Query( $args );
-                
-                if ( $query->have_posts() ) {
-                    while( $query->have_posts() ) {
-                        $query->the_post(); 
-                        ?>
-                        <article id="<?php the_ID(); ?>">
-                            <a href="<?php the_permalink(); ?>">
-                                <h2><?php the_title(); ?></h2>
-                            </a>
-                            <?php
-                                if ( get_field( 'service_description' )) {
-                                    $service_description = get_field( 'service_description' );
-                                    echo $service_description;
+            <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+
+                <header class="entry-header">
+                    <?php the_title( '<h1 class="entry-title">', '</h1>' ); ?>
+                </header>
+
+                <div class="entry-content">
+                    <?php the_content();
+
+                    $args = array(
+                        'post_type'      => 'fwd-service',
+                        'posts_per_page' => -1,
+                        'order'          => 'ASC',
+                        'orderby'        => 'title'
+                    );
+                    $query = new WP_Query( $args );
+
+                    if ( $query -> have_posts() ) {
+
+                        // Output Navigation
+                        echo '<nav>';
+                        while ( $query -> have_posts() ) {
+                            $query -> the_post();
+                            echo '<a href="#'. esc_attr( get_the_ID() ) .'">'. esc_html( get_the_title() ) .'</a>';
+                        }
+                        wp_reset_postdata();
+                        echo '</nav>';
+                        
+                        // Output Content
+                        $terms = get_terms( 
+                            array(
+                                'taxonomy' => 'fwd-service-type',
+                            ) 
+                        );
+                        if ( $terms && ! is_wp_error( $terms ) ) {
+                            foreach ( $terms as $term ) {
+                                echo '<h2>' . esc_html( $term->name ) . '</h2>';
+
+                                $args = array(
+                                    'post_type'      => 'fwd-service',
+                                    'posts_per_page' => -1,
+                                    'order'          => 'ASC',
+                                    'orderby'        => 'title',
+                                    'tax_query'      => array(
+                                        array(
+                                            'taxonomy'      => 'fwd-service-type',
+                                            'field'         => 'slug',
+                                            'terms'         => $term -> slug,
+                                        )
+                                    )
+                                );
+                                $query = new WP_Query( $args );
+            
+                                while ( $query -> have_posts() ) {
+                                    $query -> the_post();
+                                    
+                                    if ( function_exists( 'get_field' ) ) {
+                                        if ( get_field( 'service_description' ) ) {
+                                            echo '<article>';
+                                                echo '<h3 id="'. esc_attr( get_the_ID() ) .'">'. esc_html( get_the_title() ) .'</h3>';
+                                                the_field( 'service_description' );
+                                            echo '</article>';
+                                        }
+                                    }
+                                    wp_reset_postdata();
                                 }
-                            ?>
-                        </article>
-                        <?php
+                            }
+                        }
                     }
                     wp_reset_postdata();
-                }
-            }
-        }
-        else {
+                    ?>
+                </div>
 
-            get_template_part( 'template-parts/content', 'none' );
+            </article>
 
-        }
-        ?>
+        <?php endwhile; ?>
     </main>
 
 <?php

@@ -15,8 +15,6 @@ get_header();
 		<?php
 		while ( have_posts() ) :
 			the_post();
-
-			// get_template_part( 'template-parts/content', 'page' );
             ?>
 
             <section class='home-intro'>
@@ -30,34 +28,61 @@ get_header();
                 ?>
             </section>
 
-            <?php
-            // Works Section - - does not present if there are no works
-                $args = array(
-                    'post_type'      => 'fwd-work',
-                    'posts_per_page' => 4,
-                );
-                $query = new WP_Query( $args );
-                
-                if ( $query->have_posts() ) {
-                    echo '<section class="home-work"><h2>';
-                    esc_html_e( 'Featured Works', 'fwd' );
-                    echo '</h2>';
-                    while( $query->have_posts() ) {
-                        $query->the_post(); 
-                        ?>
-                        <article>
-                            <a href="<?php the_permalink(); ?>">
-                                <?php the_post_thumbnail('medium'); ?>
-                                <h3><?php the_title(); ?></h3>
-                            </a>
-                        </article>
-                        <?php
+            <section class='home-work'>
+                <?php
+                // Works Section - - does not present if there are no works
+                    $args = array(
+                        'post_type'      => 'fwd-work',
+                        'posts_per_page' => 4,
+                        'tax_query'      => array(
+                            array(
+                                'taxonomy'          => 'fwd-featured',
+                                'field'             => 'slug',
+                                'terms'             => 'front-page'
+                            )
+                        )
+                    );
+                    $query = new WP_Query( $args );
+                    
+                    if ( $query->have_posts() ) {
+                        echo '<section class="home-work"><h2>';
+                        esc_html_e( 'Featured Works', 'fwd' );
+                        echo '</h2>';
+                        while( $query->have_posts() ) {
+                            $query->the_post(); 
+                            ?>
+                            <article>
+                                <a href="<?php the_permalink(); ?>">
+                                    <?php the_post_thumbnail('medium'); ?>
+                                    <h3><?php the_title(); ?></h3>
+                                </a>
+                            </article>
+                            <?php
+                        }
+                        wp_reset_postdata();
+                        echo '</section>';
                     }
-                    wp_reset_postdata();
-                    echo '</section>';
-                }
-            ?>
-            <section class='home-work'></section>
+                ?>
+            </section>
+
+            <section class='home-work2'>
+                <h2><?php esc_html_e( 'Featured Works via ACF Relationship', 'fwd' ); ?></h2>
+                <?php
+                $featured_posts = get_field('relationship');
+                if( $featured_posts ): ?>
+                    <?php foreach( $featured_posts as $featured_post ): 
+                        $permalink = get_permalink( $featured_post->ID );
+                        $title = get_the_title( $featured_post->ID );
+                        $thumbnail = get_the_post_thumbnail( $featured_post->ID, 'medium' );
+                    ?>
+                        <a href="<?php echo esc_url( $permalink ); ?>">
+                            <h3><?php echo esc_html( $title ); ?></h3>
+                            <?php echo $thumbnail; ?>
+                        </a>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </section>
+
             <section class='home-left'>
                 <?php
                 if ( function_exists ( 'get_field' )) {
@@ -84,6 +109,7 @@ get_header();
                 }
                 ?>
             </section>
+
             <section class='home-right'></section>
             <section class='home-slider'></section>
 

@@ -19,6 +19,10 @@ if ( ! is_active_sidebar( 'sidebar-1' ) || ! is_active_sidebar( 'sidebar-2' ) ) 
     }
     else {
         dynamic_sidebar( 'sidebar-1' );
-    }    
+    }
+    
+    get_template_part( 'template-parts/work-categories' );
+    get_template_part( 'template-parts/random-testimonial' );
+
     ?>
 </aside><!-- #secondary -->

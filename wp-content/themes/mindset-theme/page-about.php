@@ -31,11 +31,15 @@ get_header();
             $query = new WP_Query( $args );
 
             if ( $query -> have_posts() ) {
-                $query -> the_post();
-                the_content();
+                while ( $query -> have_posts() ) {
+                    $query -> the_post();
+                    the_content();
+                }
             }
             wp_reset_postdata();
 		endwhile; // End of the loop.
+        
+        get_template_part( 'template-parts/work-categories' );
 		?>
 
 	</main><!-- #primary -->
